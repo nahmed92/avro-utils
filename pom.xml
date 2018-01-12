@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.etilize.avro</groupId>
+    <artifactId>avro-utils</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>avro-utils</name>
+    <description>Set of Avro related utility classes</description>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.6.RELEASE</version>
+        <relativePath /> <!-- lookup parent from repository -->
+    </parent>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <sonar.host.url>http://sonar.etilizepak.com</sonar.host.url>
+        <avro.version>1.8.2</avro.version>
+        <jackson.version>2.9.3</jackson.version>
+    </properties>
+
+    <inceptionYear>2018</inceptionYear>
+
+    <organization>
+        <name>Etilize</name>
+        <url>http://www.etilize.com</url>
+    </organization>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-stream-dependencies</artifactId>
+                <version>Ditmars.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-stream-schema</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <version>${avro.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-avro</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>20.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-contract-wiremock</artifactId>
+            <version>1.2.1.RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock</artifactId>
+            <version>2.12.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <!-- Error Prone integration -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.3</version>
+                    <configuration>
+                        <compilerId>javac-with-errorprone</compilerId>
+                        <forceJavacCompilerUse>true</forceJavacCompilerUse>
+                        <!-- maven-compiler-plugin defaults to targeting
+                            Java 5, but our javac only supports >=6 -->
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <showWarnings>true</showWarnings>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.codehaus.plexus</groupId>
+                            <artifactId>plexus-compiler-javac-errorprone</artifactId>
+                            <version>2.8</version>
+                        </dependency>
+                        <!-- override plexus-compiler-javac-errorprone's
+                            dependency on Error Prone with the latest version -->
+                        <dependency>
+                            <groupId>com.google.errorprone</groupId>
+                            <artifactId>error_prone_core</artifactId>
+                            <version>2.0.15</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <systemProperties>
+                            <property>
+                                <name>user.language</name>
+                                <value>en</value>
+                            </property>
+                        </systemProperties>
+                        <forkMode>once</forkMode>
+                        <failIfNoTests>false</failIfNoTests>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>3.0.1</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <profiles>
+        <!-- Profile to be run by developers to add license and format code -->
+        <profile>
+            <id>dev</id>
+            <properties>
+                <sonar.analysis.mode>preview</sonar.analysis.mode>
+                <sonar.issuesReport.console.enable>true</sonar.issuesReport.console.enable>
+                <sonar.issuesReport.html.enable>true</sonar.issuesReport.html.enable>
+                <sonar.exclusions>**/generated-sources/**</sonar.exclusions>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- license configuration -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>license-maven-plugin</artifactId>
+                        <version>1.7</version>
+                        <executions>
+                            <execution>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>update-file-header</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <licenseName>etilize</licenseName>
+                            <licenseResolver>classpath://license</licenseResolver>
+                            <processStartTag>#region</processStartTag>
+                            <processEndTag>#endregion</processEndTag>
+                            <sectionDelimiter>%%</sectionDelimiter>
+                            <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+                            <excludes>
+                                <exclude>**/*.js</exclude>
+                                <exclude>**/*.json</exclude>
+                            </excludes>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.etilize.build</groupId>
+                                <artifactId>etilize-build-tools</artifactId>
+                                <version>0.0.2-SNAPSHOT</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                    <!-- code formatting -->
+                    <plugin>
+                        <groupId>net.revelc.code.formatter</groupId>
+                        <artifactId>formatter-maven-plugin</artifactId>
+                        <version>2.0.1</version>
+                        <executions>
+                            <execution>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>format</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <configFile>eclipse/formatter.xml</configFile>
+                            <importOrderFile>eclipse/etilize.importorder</importOrderFile>
+                            <directories>
+                                <directory>${project.build.sourceDirectory}</directory>
+                                <directory>${project.build.testSourceDirectory}</directory>
+                                <directory>${project.build.directory}/generated-sources</directory>
+                            </directories>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.etilize.build</groupId>
+                                <artifactId>etilize-build-tools</artifactId>
+                                <version>0.0.2-SNAPSHOT</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                    <!-- removes trailing spaces -->
+                    <plugin>
+                        <groupId>com.google.code.maven-replacer-plugin</groupId>
+                        <artifactId>replacer</artifactId>
+                        <version>1.5.3</version>
+                        <executions>
+                            <execution>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>replace</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <includes>
+                                <include>${project.build.sourceDirectory}/**/*.java</include>
+                                <include>${project.build.testSourceDirectory}/**/*.java</include>
+                            </includes>
+                            <!-- not using \s as it removes blank lines as
+                                well -->
+                            <token>[ ]+$</token>
+                            <value />
+                            <regexFlags>
+                                <regexFlag>MULTILINE</regexFlag>
+                            </regexFlags>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonarsource.scanner.maven</groupId>
+                        <artifactId>sonar-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>sonar</goal>
+                                </goals>
+                                <phase>prepare-package</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!-- Profile to be run on the CI server, JARs JavaDocs -->
+            <id>ci</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>package-javadoc</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <phase>package</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <distributionManagement>
+        <repository>
+            <id>deployment</id>
+            <name>Internal Releases</name>
+            <url>http://repo.etilizepak.com/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>deployment</id>
+            <name>Internal Releases</name>
+            <url>http://repo.etilizepak.com/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>

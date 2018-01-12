@@ -1,0 +1,6 @@
+{
+    "subject": "testmessage",
+    "version": 1,
+    "id": 1,
+    "schema": "{\"type\":\"record\",\"name\":\"TestMessage\",\"namespace\":\"com.etilize.avro.spring.test.TestMessage\",\"doc\":\"Message for testing\",\"fields\":[{\"name\":\"field1\",\"type\":\"string\",\"doc\":\"Required string field\"},{\"name\":\"field2\",\"type\":[{\"type\":\"long\",\"java-class\":\"java.lang.Long\"},\"null\"],\"doc\":\"Nullable long field wit default value of -1\",\"default\":-1}]}"
+}
