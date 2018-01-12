@@ -1,0 +1,44 @@
+################################################
+#      overcommit configuration file           #
+#      https://github.com/brigade/overcommit   #
+################################################
+
+CommitMsg:
+  HardTabs:
+    enabled: true
+    required: true
+
+  MessageFormat:
+    enabled: true
+
+PreCommit:
+  HardTabs:
+    enabled: true
+    required: true
+
+  TrailingWhitespace:
+    enabled: true
+    required: true
+
+  YamlSyntax:
+    enabled: true
+
+  # https://github.com/adrienverge/yamllint
+  YamlLint:
+    enabled: true
+
+  # http://xmlsoft.org/xmllint.html
+  XmlLint:
+    enabled: true
+
+  # https://github.com/purcell/sqlint
+  Sqlint:
+    enabled: true
+
+  # https://github.com/brigade/scss-lint
+  ScssLint:
+    enabled: true
+
+  # http://www.jslint.com/
+  JsLint:
+    enabled: true
