@@ -64,4 +64,19 @@ public class AvroInteropUtils {
         final AvroSchema schema = mapper.schemaFor(clazz);
         return mapper.readerFor(clazz).with(schema).readValue(payload);
     }
+
+    /**
+     * Decodes the given payload using provided avro schema as an instance of the given clazz
+     *
+     * @param payload the payload to decode
+     * @param schema avro schmea
+     * @param clazz the java type/class the message should be decoded as
+     * @return decoded payload
+     * @throws IOException is thrown when there is an error in decoding payload
+     */
+    public <T> T decode(final byte[] payload, final String schema, final Class<T> clazz)
+            throws IOException {
+        final AvroSchema avroschema = mapper.schemaFrom(schema);
+        return mapper.readerFor(clazz).with(avroschema).readValue(payload);
+    }
 }
