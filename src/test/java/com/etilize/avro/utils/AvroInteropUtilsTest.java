@@ -28,6 +28,9 @@
 
 package com.etilize.avro.utils;
 
+import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.Matchers.*;
+
 import org.apache.avro.io.DatumWriter;
 import org.apache.avro.io.Encoder;
 import org.apache.avro.io.EncoderFactory;
@@ -47,7 +50,7 @@ public class AvroInteropUtilsTest extends AbstractTest {
 
     private final TestMessage testMessage = new TestMessage("Mock Field 1");
 
-    private AvroMapper mapper = new AvroMapper();;
+    private final AvroMapper mapper = new AvroMapper();
 
     @Override
     public void before() throws Exception {
@@ -68,5 +71,19 @@ public class AvroInteropUtilsTest extends AbstractTest {
     public void shouldDecode() throws Exception {
 
         avro.decode(payload, TestMessage.class);
+    }
+
+    @Test
+    public void shouldDecodeUsingSchema() throws Exception {
+        final String schema = "{\"type\":\"record\",\"name\":\"TestMessage\",\"namespace\":"
+                + "\"com.etilize.avro.test\",\"doc\":\"Message for testing\",\"fields\":"
+                + "[{\"name\":\"field1\",\"type\":\"string\",\"doc\":\"Required string field\"},"
+                + "{\"name\":\"field2\",\"type\":[{\"type\":\"long\",\"java-class\":"
+                + "\"java.lang.Long\"},\"null\"],\"doc\":\"Nullable long field wit default value"
+                + " of -1\",\"default\":-1}]}";
+
+        final TestMessage testMessage = avro.decode(payload, schema, TestMessage.class);
+        assertThat(testMessage.getField1(), is("Mock Field 1"));
+        assertThat(testMessage.getField2(), nullValue());
     }
 }
